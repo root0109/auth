@@ -16,6 +16,7 @@
 *.iml
 *.ipr
 
+<<<<<<< HEAD
 ### NetBeans ###
 /nbproject/private/
 /build/
@@ -23,6 +24,14 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+=======
+
+# Compiled class file
+*.class
+
+# Log file
+*.log
+>>>>>>> first version of auth.
 
 # BlueJ files
 *.ctxt
@@ -41,3 +50,7 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+<<<<<<< HEAD
+=======
+
+>>>>>>> first version of auth.

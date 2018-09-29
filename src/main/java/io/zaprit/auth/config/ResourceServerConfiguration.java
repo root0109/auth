@@ -1,7 +1,7 @@
 package io.zaprit.auth.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -12,8 +12,8 @@ import io.zaprit.auth.constants.EndPoint;
 @EnableResourceServer
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 {
-
-	private static final String		RESOURCE_ID			= "resource-server-rest-api";
+	@Value("${security.oauth2.resource.id}")
+	private static String			RESOURCE_ID;
 	private static final String		SECURED_READ_SCOPE	= "#oauth2.hasScope('read')";
 	private static final String		SECURED_WRITE_SCOPE	= "#oauth2.hasScope('write')";
 	private static final String[]	SECURED_PATTERN		= new String[] { EndPoint.V1 + "/**", EndPoint.V2 + "/**" };	// "/secured/**";
@@ -27,7 +27,12 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 	@Override
 	public void configure(HttpSecurity http) throws Exception
 	{
-		http.requestMatchers().antMatchers(SECURED_PATTERN).and().authorizeRequests().antMatchers(HttpMethod.POST, SECURED_PATTERN)
-				.access(SECURED_WRITE_SCOPE).anyRequest().access(SECURED_READ_SCOPE);
+		/*
+		 * http.requestMatchers().antMatchers(SECURED_PATTERN).and().authorizeRequests()
+		 * .antMatchers(HttpMethod.POST, SECURED_PATTERN)
+		 * .access(SECURED_WRITE_SCOPE).anyRequest().access(SECURED_READ_SCOPE);
+		 */
+
+		http.authorizeRequests().antMatchers(SECURED_PATTERN).access(SECURED_WRITE_SCOPE).anyRequest().access(SECURED_READ_SCOPE);
 	}
 }

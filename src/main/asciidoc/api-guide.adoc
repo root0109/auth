@@ -1,4 +1,4 @@
-= RESTful Notes API Guide
+= SSO Application - OAuth2.0 API Guide
 Vaibhav;
 :doctype: book
 :icons: font
@@ -13,7 +13,7 @@ Vaibhav;
 [[overview-http-verbs]]
 == HTTP verbs
 
-RESTful notes tries to adhere as closely as possible to standard HTTP and REST conventions in its
+This SSO Application implemented using Oauth2.0 tries to adhere as closely as possible to standard HTTP and REST conventions in its
 use of HTTP verbs.
 
 |===
@@ -32,7 +32,7 @@ use of HTTP verbs.
 | Used to delete an existing resource
 |===
 
-RESTful notes tries to adhere as closely as possible to standard HTTP and REST conventions in its
+This SSO Application implemented using Oauth2.0 tries to adhere as closely as possible to standard HTTP and REST conventions in its
 use of HTTP status codes.
 
 |===
@@ -58,7 +58,7 @@ use of HTTP status codes.
 [[overview-hypermedia]]
 == Hypermedia
 
-RESTful Notes uses hypermedia and resources include links to other resources in their
+This SSO Application implemented using Oauth2.0 uses hypermedia and resources include links to other resources in their
 responses. Responses are in http://stateless.co/hal_specification.html[Hypertext Application
 from resource to resource.
 Language (HAL)] format. Links can be found beneath the `_links` key. Users of the API should
@@ -67,14 +67,102 @@ not create URIs themselves, instead they should use the above-described links to
 [[resources]]
 = Resources
 
+[[resources-oauth]]
+== OAuth Index
+
+`GET Access Token` request is used to acquire the oauth access token.
+
+[[resources-oauth-access-token-password-grant]]
+=== GET Access Token by Password Grant
+
+Below `POST` request is used to get the access token by password grant.
+
+==== Request structure
+
+include::{snippets}/get-access-token-by-password-grant/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/get-access-token-by-password-grant/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-access-token-by-password-grant/curl-request.adoc[]
+
+[[resources-OAUTH]]
+== GET Access Token by Clients Credentials
+
+Below `POST` request is used to get the access token by clients_credentials grant.
+
+[[resources-oauth-access-token-credentials-grant]]
+=== GET Access Token by Clients Credentials Grant
+
+Below `POST` request is used to get the access token by clients_credentials grant.
+
+==== Request structure
+
+include::{snippets}/get-access-token-by-client-credentials/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/get-access-token-by-client-credentials/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-access-token-by-client-credentials/curl-request.adoc[]
+
+[[resources-oauth-refresh-token-get]]
+=== Refreshing the access token
+
+A `POST` request to refresh the access token.
+
+==== SUCCESS Request structure
+
+include::{snippets}/refresh-access-token/http-request.adoc[]
+
+==== FAILURE Request structure
+
+include::{snippets}/validate-refresh-token/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/refresh-access-token/http-response.adoc[]
+
+----
+Note :
+
+When expires_in is 0 that means this access token is expired and then you have to make 
+the call again to get the access token.
+
+{
+  "access_token" : "some access token",
+  "token_type" : "bearer",
+  "refresh_token" : "original refresh token of the request",
+  "expires_in" : 0,
+  "scope" : "read write"
+}
 
 
-[[resources-index]]
-== Index
+this will be send by when any resource end point is accessed
+
+e.g <base_url>/v1/company/example-company-id/users
+
+{ 
+	"error":"invalid_token",
+	"error_description":"Access token expired: some-access-token-value"
+}
+
+----
+==== CURL request
+
+include::{snippets}/refresh-access-token/curl-request.adoc[]
+
+[[resources-company]]
+== Company Index
 
 `Add Company` request is used to insert the company.
 
-[[resources-index-access]]
+[[resources-company-access]]
 === Adding Company
 
 Below `POST` request is used to create the company.
@@ -96,7 +184,7 @@ include::{snippets}/add-company/curl-request.adoc[]
 
 `Update Company` request is used to update the company object.
 
-[[resources-crud-get]]
+[[resources-company-post]]
 === Updating the Company Object
 
 Below `POST` request is used to update the company object.
@@ -113,7 +201,7 @@ include::{snippets}/update-company/http-response.adoc[]
 
 include::{snippets}/update-company/curl-request.adoc[]
 
-[[resources-crud-post]]
+[[resources-company-get]]
 === Accessing the Company  by Id
 
 A `GET` request is used to access the CRUD create.
@@ -163,3 +251,124 @@ include::{snippets}/get-all-company/http-response.adoc[]
 ==== CURL request
 
 include::{snippets}/get-all-company/curl-request.adoc[]
+
+
+[[resources-account]]
+== User Account Index
+
+`Register User` request is used to register the user for a company.
+
+[[resources-account-access]]
+=== Adding Company
+
+Below `POST` request is used to create the user.
+
+==== Request structure
+
+include::{snippets}/register-user/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/register-user/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/register-user/curl-request.adoc[]
+
+[[resources-user-account]]
+== Updating User Account
+
+`Update Account` request is used to update the User Account object.
+
+[[resources-user-post]]
+=== Updating the Company Object
+
+Below `POST` request is used to update the company user account object.
+
+==== Request structure
+
+include::{snippets}/update-user/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/update-user/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/update-user/curl-request.adoc[]
+
+[[resources-user-by-id-get]]
+=== Accessing the User  by Id 
+
+A `GET` request is used to access the User by Id.
+
+==== Request structure
+
+include::{snippets}/get-user-by-id/http-request.adoc[]
+
+In case of error :
+
+include::{snippets}/get-user-by-id-not-found/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/get-user-by-id/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-user-by-id/curl-request.adoc[]
+
+[[resources-user-by-email-get]]
+=== Accessing the User  by Id 
+
+A `GET` request is used to access the User by emailId.
+
+==== Request structure
+
+include::{snippets}/get-user-by-email-id/http-request.adoc[]
+
+In case of error :
+
+include::{snippets}/get-user-by-email-id-not-found/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/get-user-by-email-id/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-user-by-email-id/curl-request.adoc[]
+
+[[resources-user-delete]]
+=== Deleting the User by Id
+
+A `DELETE` request is used to delete the user object.
+
+==== Request structure
+
+include::{snippets}/delete-user/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/delete-user/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/delete-user/curl-request.adoc[]
+
+[[resources-get-users-company]]
+=== Accessing all the users of a Company
+
+A `GET` request is used to access all the user accounts of the the company.
+
+==== Request structure
+
+include::{snippets}/get-all-company-users/http-request.adoc[]
+
+==== Example response
+
+include::{snippets}/get-all-company-users/http-response.adoc[]
+
+==== CURL request
+
+include::{snippets}/get-all-company-users/curl-request.adoc[]

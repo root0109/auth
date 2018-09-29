@@ -70,4 +70,19 @@ public interface UserDao
 	 *            the user's ID
 	 */
 	public void save(User user);
+
+	/**
+	 * update the User object in DB
+	 *
+	 * @param id
+	 *            the user's ID
+	 */
+	public void update(User user);
+
+	/**
+	 * Find all users
+	 *
+	 * @return User List.
+	 */
+	public Optional<List<User>> getAllCompanyUsers(String companyId);
 }

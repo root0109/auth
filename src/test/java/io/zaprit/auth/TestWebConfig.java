@@ -17,10 +17,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @EnableConfigurationProperties
-@TestPropertySource(locations = "classpath:application.properties")
+@TestPropertySource(locations = "classpath:application-test.properties")
 @ComponentScan(basePackages = { "io.zaprit.auth" })
 public class TestWebConfig implements WebMvcConfigurer, ApplicationContextAware
 {
+	@SuppressWarnings("unused")
 	private ApplicationContext applicationContext;
 
 	@Override

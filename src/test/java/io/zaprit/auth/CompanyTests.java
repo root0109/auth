@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -46,7 +47,8 @@ import io.zaprit.auth.constants.EndPoint;
 @WebAppConfiguration
 @TestInstance(Lifecycle.PER_CLASS)
 @ContextConfiguration(classes = { TestWebConfig.class })
-@TestPropertySource(locations = "classpath:application.properties")
+@TestPropertySource(locations = "classpath:application-test.properties")
+@DisplayName("Company TestCases")
 public class CompanyTests
 {
 	@Autowired
@@ -58,6 +60,9 @@ public class CompanyTests
 	private MockMvc					mockMvc;
 	private static String			accessToken;
 	private static String			companyId;
+	private static boolean			print				= true;
+	private static final String		oauthClientId		= "web-test-read-write-client";
+	private static final String		oAuthClientPassword	= "spring-security-oauth2-read-write-client-password1234";
 
 	@BeforeEach
 	public void setUp(RestDocumentationContextProvider restDocumentation) throws Exception
@@ -70,13 +75,12 @@ public class CompanyTests
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("grant_type", "password");
-		params.add("client_id", "oauth2-read-write-client");
+		params.add("client_id", oauthClientId);
 		params.add("username", "admin");
 		params.add("password", "admin1234");
 
 		ResultActions result = mockMvc
-				.perform(post("/oauth/token").params(params)
-						.with(httpBasic("oauth2-read-write-client", "spring-security-oauth2-read-write-client-password1234"))
+				.perform(post("/oauth/token").params(params).with(httpBasic(oauthClientId, oAuthClientPassword))
 						.accept("application/json;charset=UTF-8"))
 				.andExpect(status().isOk()).andExpect(content().contentType("application/json;charset=UTF-8"));
 
@@ -87,6 +91,13 @@ public class CompanyTests
 	@Test
 	public void addCompany() throws Exception
 	{
+		if (print)
+		{
+			System.out.println("-------------------------------------------------------------------------------------------------");
+			System.out.println(new Object()
+			{}.getClass().getEnclosingMethod().getName());
+			System.out.println("-------------------------------------------------------------------------------------------------");
+		}
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add("authorization", "Bearer " + accessToken);
 		RequestBuilder requestBuilder = post(EndPoint.Company.V1 + EndPoint.ADD).headers(httpHeaders)
@@ -102,6 +113,10 @@ public class CompanyTests
 	@Test
 	public void getAllCompany() throws Exception
 	{
+		System.out.println("-------------------------------------------------------------------------------------------------");
+		System.out.println(new Object()
+		{}.getClass().getEnclosingMethod().getName());
+		System.out.println("-------------------------------------------------------------------------------------------------");
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add("authorization", "Bearer " + accessToken);
 		RequestBuilder requestBuilder = get(EndPoint.Company.V1 + EndPoint.GET).headers(httpHeaders)
@@ -114,7 +129,13 @@ public class CompanyTests
 	@Test
 	public void getCompany() throws Exception
 	{
+		System.out.println("-------------------------------------------------------------------------------------------------");
+		System.out.println(new Object()
+		{}.getClass().getEnclosingMethod().getName());
+		System.out.println("-------------------------------------------------------------------------------------------------");
+		print = false;
 		addCompany();
+		print = true;
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add("authorization", "Bearer " + accessToken);
 		RequestBuilder requestBuilder = get(EndPoint.Company.V1 + EndPoint.GET_ID, companyId).headers(httpHeaders)
@@ -127,6 +148,10 @@ public class CompanyTests
 	@Test
 	public void updateCompany() throws Exception
 	{
+		System.out.println("-------------------------------------------------------------------------------------------------");
+		System.out.println(new Object()
+		{}.getClass().getEnclosingMethod().getName());
+		System.out.println("-------------------------------------------------------------------------------------------------");
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add("authorization", "Bearer " + accessToken);
 		RequestBuilder requestBuilder = put(EndPoint.Company.V1 + EndPoint.UPDATE).headers(httpHeaders).param("id", companyId)
@@ -140,6 +165,10 @@ public class CompanyTests
 	@Test
 	public void deleteCompany() throws Exception
 	{
+		System.out.println("-------------------------------------------------------------------------------------------------");
+		System.out.println(new Object()
+		{}.getClass().getEnclosingMethod().getName());
+		System.out.println("-------------------------------------------------------------------------------------------------");
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add("authorization", "Bearer " + accessToken);
 		RequestBuilder requestBuilder = delete(EndPoint.Company.V1 + EndPoint.DELETE, companyId).headers(httpHeaders)

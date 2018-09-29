@@ -40,6 +40,8 @@ public class EndPoint
 		private static final String	ROOT		= "/account";
 		public static final String	REGISTER	= "/register";
 		public static final String	CONFIRM		= "/confirm";
+		public static final String	ALL			= "/all";
+		public static final String	COMPANY_ALL	= "/company/{companyId}/users";
 		public static final String	V1			= EndPoint.V1 + ROOT;
 		public static final String	V2			= EndPoint.V2 + ROOT;
 	}

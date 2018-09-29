@@ -13,12 +13,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 import io.zaprit.auth.bo.User;
 import io.zaprit.auth.constants.EndPoint;
 import io.zaprit.auth.constants.EndPoint.Account;
@@ -43,9 +45,14 @@ public class AccountController
 	private MessageSource	messageSource;
 
 	@PostMapping(value = Account.REGISTER, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> processRegistrationForm(ModelAndView modelAndView, @Valid User user, Locale locale)
+	public ResponseEntity<?> processRegistrationForm(@Valid User user, BindingResult bindingResult, Locale locale)
 	{
 		String message = "";
+		if (bindingResult.hasErrors())
+		{
+			message = "Invalid Params" + bindingResult.toString();
+			return new ResponseEntity<>(message, HttpStatus.CREATED);
+		}
 		if (accountService.isUserRegistered(user))
 		{
 			message = messageSource.getMessage("registration.emailExists", new Object[] { user.getEmail() }, locale);
@@ -56,7 +63,7 @@ public class AccountController
 			message = messageSource.getMessage("registration.confirmationEmail", new Object[] { user.getEmail() }, locale);
 		}
 		log.info("Account Registration recieved: " + user.toString());
-		return new ResponseEntity<>(message, HttpStatus.OK);
+		return new ResponseEntity<>(message, HttpStatus.CREATED);
 	}
 
 	@PostMapping(value = Account.CONFIRM, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -93,12 +100,34 @@ public class AccountController
 			throw new UsernameNotFoundException("User for principal not found!");
 		}
 		User user = optionalUser.get();
-		// override email (in Principal username) with ID - only used at this endpoint
-		user.setEmail(user.getId());
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
-	@GetMapping(value = EndPoint.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = EndPoint.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<User> getUserByEmail(@RequestParam("emailId") String emailId)
+	{
+		Optional<User> optionalUser = userService.getUserByEmail(emailId);
+		if (!optionalUser.isPresent())
+		{
+			throw new UsernameNotFoundException("User for principal not found!");
+		}
+		User user = optionalUser.get();
+		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
+
+	@PutMapping(value = EndPoint.UPDATE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> update(@Valid User user, BindingResult bindingResult)
+	{
+		Optional<User> optionalUser = userService.getUserByEmail(user.getEmail());
+		if (!optionalUser.isPresent() || optionalUser.get().getEmail().equalsIgnoreCase(user.getEmail()))
+		{
+			throw new UsernameNotFoundException("User for principal not found!");
+		}
+		userService.update(user);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@DeleteMapping(value = EndPoint.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> deleteUser(@PathVariable("id") String id, Locale locale)
 	{
 		Optional<User> optionalUser = userService.getUser(id);
@@ -111,14 +140,20 @@ public class AccountController
 			}
 		}
 		userService.delete(optionalUser.get());
-		return new ResponseEntity<>(messageSource.getMessage("delete.warning", null, locale), HttpStatus.OK);
+		return new ResponseEntity<>(messageSource.getMessage("delete.success", null, locale), HttpStatus.OK);
 	}
 
-	@GetMapping(value = EndPoint.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<User> getAllUsers()
+	@GetMapping(value = EndPoint.Account.COMPANY_ALL, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<User>> getAllCompanyUsers(@PathVariable("companyId") String companyId)
+	{
+		log.debug("Accessing list of users for companyId: " + companyId);
+		return new ResponseEntity<>(userService.getAllCompanyUsers(companyId), HttpStatus.OK);
+	}
+
+	@GetMapping(value = EndPoint.Account.ALL, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<User>> getAllUsers(@PathVariable("companyId") String companyId)
 	{
 		log.debug("Accessing list of users");
-		return userService.getAll();
+		return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
 	}
-
 }

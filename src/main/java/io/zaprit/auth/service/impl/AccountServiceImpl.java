@@ -39,7 +39,6 @@ public class AccountServiceImpl implements AccountService
 	private MessageSource			messages;
 
 	@Override
-	@PreAuthorize("hasAuthority('USER_CREATE')")
 	public void registerUser(User user, Locale locale)
 	{
 		log.debug("Registering new user...");
@@ -61,7 +60,9 @@ public class AccountServiceImpl implements AccountService
 		log.debug("Sending confirmation token to the selected email: {}", user.getEmail());
 		String message = messages.getMessage("email.registration", null, locale);
 		String link = properties.getRedirectionUrl() + "/confirm?token=" + user.getConfirmationToken() + "&password=" + user.getPassword();
-		emailService.prepareAndSend(user.getEmail(), properties.getEmailFrom(), "Registration confirmation", message, link);
+		// For time being disabled
+		// emailService.prepareAndSend(user.getEmail(), properties.getEmailFrom(),
+		// "Registration confirmation", message, link);
 	}
 
 	@Override

@@ -112,11 +112,35 @@ public class UserServiceImpl implements UserService
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAuthority('USER_READ')")
+	public List<User> getAllCompanyUsers(String companyId)
+	{
+		log.debug("Getting All User.");
+		Optional<List<User>> optionalUser = userDao.getAllCompanyUsers(companyId);
+		if (!optionalUser.isPresent())
+		{
+			log.error("User not found!");
+			throw new UsernameNotFoundException("User not found for this company: " + companyId);
+		}
+		return optionalUser.get();
+	}
+
+	@Override
 	@Transactional
 	@PreAuthorize("hasAuthority('USER_CREATE')")
 	public void save(User user)
 	{
-		log.debug("save user by id: {}", user.getId());
 		userDao.save(user);
+		log.debug("save user by id: {}", user.getId());
+	}
+
+	@Override
+	@Transactional
+	@PreAuthorize("hasAuthority('USER_CREATE') or hasAuthority('USER_UPDATE')")
+	public void update(User user)
+	{
+		userDao.update(user);
+		log.debug("updated user by id: {}", user.getId());
 	}
 }

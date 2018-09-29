@@ -27,7 +27,7 @@ public class ServerSecurityConfig extends WebSecurityConfigurerAdapter
 	protected void configure(HttpSecurity httpSecurity) throws Exception
 	{
 		httpSecurity.authorizeRequests().antMatchers("/").permitAll().and().authorizeRequests()
-				.antMatchers("/restrictedH2/**", "/webjars/**", "/static/**", "/resources/**").permitAll();
+				.antMatchers("/restrictedH2/**", "/v1/account/register/**", "/webjars/**", "/static/**", "/resources/**").permitAll();
 		httpSecurity.csrf().disable();
 		httpSecurity.headers().frameOptions().disable();
 	}

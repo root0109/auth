@@ -93,9 +93,28 @@ public class UserDaoImpl implements UserDao
 
 	@SuppressWarnings("unchecked")
 	@Override
+	public Optional<List<User>> getAllCompanyUsers(String companyId)
+	{
+		String query = "SELECT DISTINCT user FROM " + User.class.getName()
+				+ " user INNER JOIN FETCH user.authorities AS authorities where user.companyId=:companyId";
+
+		Query q = entityManager.createQuery(query);
+		q.setParameter("companyId", companyId);
+		try
+		{
+			return Optional.of((List<User>) q.getResultList());
+		}
+		catch (Exception e)
+		{
+			return Optional.empty();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public Optional<List<User>> getAll()
 	{
-		String query = "SELECT user FROM " + User.class.getName() + " user INNER JOIN FETCH user.authorities AS authorities ";
+		String query = "SELECT DISTINCT user FROM " + User.class.getName() + " user INNER JOIN FETCH user.authorities AS authorities ";
 
 		Query q = entityManager.createQuery(query);
 		try
@@ -111,8 +130,13 @@ public class UserDaoImpl implements UserDao
 	@Override
 	public void save(User user)
 	{
-		log.debug(user.toString());
 		entityManager.persist(user);
 		log.debug(user.toString());
+	}
+
+	@Override
+	public void update(User user)
+	{
+		entityManager.merge(user);
 	}
 }

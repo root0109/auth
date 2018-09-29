@@ -21,7 +21,7 @@ public interface UserService extends UserDetailsService
 	 *            the user's email
 	 * @return user which contains the user with the given email or null.
 	 */
-	Optional<User> getUserByEmail(String email);
+	public Optional<User> getUserByEmail(String email);
 
 	/**
 	 * Find a user by confirmation token.
@@ -30,7 +30,7 @@ public interface UserService extends UserDetailsService
 	 *            generated for registration confirmation
 	 * @return user associated with this confirmation token
 	 */
-	Optional<User> getUserByConfirmationToken(String confirmationToken);
+	public Optional<User> getUserByConfirmationToken(String confirmationToken);
 
 	/**
 	 * Find a user by ID.
@@ -39,26 +39,40 @@ public interface UserService extends UserDetailsService
 	 *            the user's ID
 	 * @return User returns an Optional User object which contains the user or null.
 	 */
-	Optional<User> getUser(String id);
+	public Optional<User> getUser(String id);
 
 	/**
 	 * Delete user
 	 * 
 	 * @param user
 	 */
-	void delete(User user);
+	public void delete(User user);
 
 	/**
 	 * Get all Users
 	 * 
 	 * @return
 	 */
-	List<User> getAll();
+	public List<User> getAllCompanyUsers(String companyId);
+
+	/**
+	 * Get all Users
+	 * 
+	 * @return
+	 */
+	public List<User> getAll();
 
 	/**
 	 * Save User Object
 	 * 
 	 * @param user
 	 */
-	void save(User user);
+	public void save(User user);
+
+	/**
+	 * update User Object
+	 * 
+	 * @param user
+	 */
+	public void update(User user);
 }

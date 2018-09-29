@@ -319,7 +319,7 @@ include::{snippets}/get-user-by-id/http-response.adoc[]
 include::{snippets}/get-user-by-id/curl-request.adoc[]
 
 [[resources-user-by-email-get]]
-=== Accessing the User  by Id 
+=== Accessing the User  by EmailId 
 
 A `GET` request is used to access the User by emailId.
 

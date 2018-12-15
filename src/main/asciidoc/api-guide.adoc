@@ -55,14 +55,14 @@ use of HTTP status codes.
 | The requested resource did not exist
 |===
 
-[[overview-hypermedia]]
-== Hypermedia
+[[overview-terminology]]
+== Terminology
 
-This SSO Application implemented using Oauth2.0 uses hypermedia and resources include links to other resources in their
-responses. Responses are in http://stateless.co/hal_specification.html[Hypertext Application
-from resource to resource.
-Language (HAL)] format. Links can be found beneath the `_links` key. Users of the API should
-not create URIs themselves, instead they should use the above-described links to navigate
+There are two types of token are provided by our SSO Application.
+access_token is responsible for accessing your resources from the resource server. 
+This token usually has a little validity time. You can access your data with this token a certain time before it get’s expired. 
+So after it expires, you need to request Authorization server for a new access_token with your refresh token, client id, and client secret, so that you don’t need to send user credentials again and again. 
+Refresh token has more validation time than Access Token. Typically 7-90 days.
 
 [[resources]]
 = Resources

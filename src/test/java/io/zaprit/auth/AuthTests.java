@@ -39,6 +39,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import com.zaprit.scope.util.validation.FileUtil;
 
 /**
  * @author vaibhav.singh
@@ -74,7 +75,7 @@ public class AuthTests
 				.alwaysDo(document("{method-name}", Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
 						Preprocessors.preprocessResponse(Preprocessors.prettyPrint())))
 				.build();
-		Thread.sleep(1000);
+		Thread.sleep(500);
 	}
 
 	@Test
@@ -98,6 +99,7 @@ public class AuthTests
 		String response = result.andReturn().getResponse().getContentAsString();
 		DocumentContext documentContext = JsonPath.parse(response);
 		accessToken = documentContext.read("$.access_token").toString();
+		FileUtil.writeStringToFile("/var/tmp/access_token", accessToken);
 		refreshToken = documentContext.read("$.refresh_token").toString();
 	}
 
